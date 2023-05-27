@@ -20,7 +20,7 @@ jobs:
 
       - name: Prepare output
         run: |
-          zip include.zip include/tinyalsa/*.h
+          zip -j include.zip include/tinyalsa/*.h
           mv src/libtinyalsa.a libtinyalsa-android30.a
 
       - name: Upload build output
