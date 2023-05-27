@@ -6,9 +6,12 @@ ifdef DEB_HOST_MULTIARCH
 LIBDIR := $(LIBDIR)/$(DEB_HOST_MULTIARCH)
 endif
 
-CC = $(CROSS_COMPILE)gcc
-AR = $(CROSS_COMPILE)ar
-LD = $(CROSS_COMPILE)gcc
+HOST_OS := $(shell uname -s | tr '[:upper:]' '[:lower:]')
+HOST_ARCH := $(shell uname -m)
+
+CC = $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(HOST_OS)-$(HOST_ARCH)/bin/aarch64-linux-android30-clang
+AR = $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(HOST_OS)-$(HOST_ARCH)/bin/llvm-ar
+LD = $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(HOST_OS)-$(HOST_ARCH)/bin/aarch64-linux-android30-clang
 
 WARNINGS = -Wall -Wextra -Werror -Wfatal-errors
 INCLUDE_DIRS = -I ../include

@@ -1,0 +1,49 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-android:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Compile
+        run: make
+        working-directory: ./src
+
+      - name: Prepare output
+        run: |
+          zip include.zip include/tinyalsa/*.h
+          mv src/libtinyalsa.a libtinyalsa-android30.a
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-output-android30
+          path: libtinyalsa-android30.a
+
+  create-release:
+    runs-on: ubuntu-20.04
+    needs: [build-android]
+    steps:
+      - name: Get build output android30
+        uses: actions/download-artifact@v2
+        with:
+          name: build-output-android30
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            include.zip
+            libtinyalsa-android30.a
+            LICENSE
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
