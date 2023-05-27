@@ -35,6 +35,8 @@ jobs:
   create-release:
     runs-on: ubuntu-20.04
     needs: [build-android]
+    permissions:
+      contents: write
     steps:
       - name: Get build output android30
         uses: actions/download-artifact@v2
