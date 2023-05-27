@@ -27,7 +27,10 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build-output-android30
-          path: libtinyalsa-android30.a
+          path: |
+            include.zip
+            libtinyalsa-android30.a
+            LICENSE
 
   create-release:
     runs-on: ubuntu-20.04
