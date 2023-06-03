@@ -369,6 +369,8 @@ long pcm_get_delay(struct pcm *pcm);
 
 int pcm_ioctl(struct pcm *pcm, int code, ...) TINYALSA_DEPRECATED;
 
+unsigned long pcm_get_boundary(const struct pcm *pcm);
+
 #if defined(__cplusplus)
 }  /* extern "C" */
 #endif

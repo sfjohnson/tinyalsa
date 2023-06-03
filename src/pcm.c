@@ -1793,3 +1793,8 @@ int pcm_ioctl(struct pcm *pcm, int request, ...)
     // FIXME Does not handle plugins
     return ioctl(pcm->fd, request, arg);
 }
+
+unsigned long pcm_get_boundary(const struct pcm *pcm)
+{
+    return pcm->boundary;
+}
