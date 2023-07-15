@@ -6,42 +6,52 @@ on:
       - 'v*'
 
 jobs:
-  build-android:
-    runs-on: ubuntu-20.04
+  build-android-and-rpi:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           persist-credentials: false
 
-      - name: Compile
-        run: make
+      - name: Get RPi toolchain
+        run: |
+          wget https://github.com/sfjohnson/rpi-toolchain/releases/download/v0.0.6/arm-rpi-linux-gnueabihf.tar.xz
+          tar xf arm-rpi-linux-gnueabihf.tar.xz -C ~
+
+      - name: Make
+        run: |
+          make -f android30.mk
+          make -f android30.mk clean
+          make -f rpi.mk
         working-directory: ./src
 
       - name: Prepare output
         run: |
           zip -j include.zip include/tinyalsa/*.h
-          mv src/libtinyalsa.a libtinyalsa-android30.a
+          mv src/libtinyalsa-android30.a ..
+          mv src/libtinyalsa-rpi.a ..
 
       - name: Upload build output
         uses: actions/upload-artifact@v2
         with:
-          name: build-output-android30
+          name: build-output-android-and-rpi
           path: |
             include.zip
             libtinyalsa-android30.a
+            libtinyalsa-rpi.a
             LICENSE
 
   create-release:
-    runs-on: ubuntu-20.04
-    needs: [build-android]
+    runs-on: ubuntu-22.04
+    needs: [build-android-and-rpi]
     permissions:
       contents: write
     steps:
-      - name: Get build output android30
+      - name: Get build output android and rpi
         uses: actions/download-artifact@v2
         with:
-          name: build-output-android30
+          name: build-output-android-and-rpi
 
       - name: Create release
         uses: softprops/action-gh-release@v1
@@ -49,6 +59,7 @@ jobs:
           files: |
             include.zip
             libtinyalsa-android30.a
+            libtinyalsa-rpi.a
             LICENSE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
