@@ -29,8 +29,8 @@ jobs:
       - name: Prepare output
         run: |
           zip -j include.zip include/tinyalsa/*.h
-          mv src/libtinyalsa-android30.a ..
-          mv src/libtinyalsa-rpi.a ..
+          mv src/libtinyalsa-android30.a .
+          mv src/libtinyalsa-rpi.a .
 
       - name: Upload build output
         uses: actions/upload-artifact@v2
