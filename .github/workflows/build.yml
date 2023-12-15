@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  build-android-and-rpi:
+  build:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -24,6 +24,8 @@ jobs:
           make -f android30.mk
           make -f android30.mk clean
           make -f rpi.mk
+          make -f rpi.mk clean
+          make -f linux-x64.mk
         working-directory: ./src
 
       - name: Prepare output
@@ -31,27 +33,29 @@ jobs:
           zip -j include.zip include/tinyalsa/*.h
           mv src/libtinyalsa-android30.a .
           mv src/libtinyalsa-rpi.a .
+          mv src/libtinyalsa-linux-x64.a .
 
       - name: Upload build output
         uses: actions/upload-artifact@v2
         with:
-          name: build-output-android-and-rpi
+          name: build-output
           path: |
             include.zip
             libtinyalsa-android30.a
             libtinyalsa-rpi.a
+            libtinyalsa-linux-x64.a
             LICENSE
 
   create-release:
     runs-on: ubuntu-22.04
-    needs: [build-android-and-rpi]
+    needs: [build]
     permissions:
       contents: write
     steps:
-      - name: Get build output android and rpi
+      - name: Get build output
         uses: actions/download-artifact@v2
         with:
-          name: build-output-android-and-rpi
+          name: build-output
 
       - name: Create release
         uses: softprops/action-gh-release@v1
@@ -60,6 +64,7 @@ jobs:
             include.zip
             libtinyalsa-android30.a
             libtinyalsa-rpi.a
+            libtinyalsa-linux-x64.a
             LICENSE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
