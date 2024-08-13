@@ -10,39 +10,35 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: Get RPi toolchain
         run: |
-          wget https://github.com/sfjohnson/rpi-toolchain/releases/download/v0.0.6/arm-rpi-linux-gnueabihf.tar.xz
-          tar xf arm-rpi-linux-gnueabihf.tar.xz -C ~
+          wget https://github.com/sfjohnson/rpi-toolchain/releases/download/v0.1.6/aarch64-rpi4-linux-gnu.tar.xz
+          tar xf aarch64-rpi4-linux-gnu.tar.xz -C ~
 
       - name: Make
         run: |
-          make -f android30.mk
-          make -f android30.mk clean
-          make -f rpi.mk
-          make -f rpi.mk clean
+          make -f rpi-arm64.mk
+          make -f rpi-arm64.mk clean
           make -f linux-x64.mk
         working-directory: ./src
 
       - name: Prepare output
         run: |
           zip -j include.zip include/tinyalsa/*.h
-          mv src/libtinyalsa-android30.a .
-          mv src/libtinyalsa-rpi.a .
+          mv src/libtinyalsa-rpi-arm64.a .
           mv src/libtinyalsa-linux-x64.a .
 
       - name: Upload build output
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: build-output
           path: |
             include.zip
-            libtinyalsa-android30.a
-            libtinyalsa-rpi.a
+            libtinyalsa-rpi-arm64.a
             libtinyalsa-linux-x64.a
             LICENSE
 
@@ -53,17 +49,16 @@ jobs:
       contents: write
     steps:
       - name: Get build output
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: build-output
 
       - name: Create release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             include.zip
-            libtinyalsa-android30.a
-            libtinyalsa-rpi.a
+            libtinyalsa-rpi-arm64.a
             libtinyalsa-linux-x64.a
             LICENSE
         env:
