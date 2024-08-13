@@ -21,7 +21,7 @@ VPATH = ../include/tinyalsa
 OBJECTS = limits.o mixer.o pcm.o pcm_plugin.o pcm_hw.o snd_card_plugin.o mixer_plugin.o mixer_hw.o
 
 .PHONY: all
-all: libtinyalsa-rpi.a
+all: libtinyalsa-rpi-arm64.a
 
 pcm.o: pcm.c limits.h pcm.h pcm_io.h plugin.h snd_card_plugin.h
 
